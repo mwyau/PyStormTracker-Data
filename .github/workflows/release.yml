@@ -1,0 +1,45 @@
+name: Release Data
+
+on:
+  push:
+    tags:
+      - 'v*-data'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - name: Get tag message
+        id: tag_info
+        shell: bash
+        run: |
+          # Get the tag contents for the current ref
+          TAG_MESSAGE=$(git tag -l --format='%(contents)' ${{ github.ref_name }})
+          # If no message is found, use the tag name
+          if [ -z "$TAG_MESSAGE" ]; then
+            TAG_MESSAGE="Data release for ${{ github.ref_name }}"
+          fi
+          # Output for next step
+          {
+            echo "message<<EOF"
+            echo "$TAG_MESSAGE"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "${{ github.ref_name }}"
+          body: ${{ steps.tag_info.outputs.message }}
+          files: |
+            *.nc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
