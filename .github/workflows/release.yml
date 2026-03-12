@@ -41,5 +41,6 @@ jobs:
           body: ${{ steps.tag_info.outputs.message }}
           files: |
             *.nc
+            *.grib
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
