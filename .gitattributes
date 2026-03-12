@@ -1,2 +1,2 @@
-*.nc filter=lfs diff=lfs merge=lfs -text export-ignore
-*.grib filter=lfs diff=lfs merge=lfs -text export-ignore
+*.nc filter=lfs diff=lfs merge=lfs -text export-ignore linguist-language=NetCDF
+*.grib filter=lfs diff=lfs merge=lfs -text export-ignore linguist-language=GRIB
