@@ -16,7 +16,7 @@ Install the [uv](https://docs.astral.sh/uv/) Python package manager, then create
 
 ```bash
 uv venv
-uv pip install "cdsapi>=0.7.7"
+uv pip install -r requirements.txt "cdsapi>=0.7.7"
 source .venv/bin/activate
 ```
 
@@ -50,6 +50,14 @@ The release workflow has three separate stages. `release-data/` is ignored by Gi
    ```
 
 Run `python3 scripts/fetch_era5.py --list` to see dataset IDs. Request definitions live in [data/era5_requests.json](data/era5_requests.json); add an entry there to add a new dataset.
+
+## Tests
+
+Run the test suite with pytest after creating the `uv` environment above:
+
+```bash
+pytest
+```
 
 ## Datasets
 

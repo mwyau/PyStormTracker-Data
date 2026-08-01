@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+.pytest_cache/
 
 # Local release data and Python environments are never committed.
 release-data/
