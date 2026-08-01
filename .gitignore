@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+
+# Local release staging directories contain large generated data assets.
+release-stage/

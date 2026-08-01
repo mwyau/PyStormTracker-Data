@@ -1,0 +1,239 @@
+{
+    "metadata": {
+        ".zattrs": {
+            "Conventions": "CF-1.7",
+            "GRIB_centre": "ecmf",
+            "GRIB_centreDescription": "European Centre for Medium-Range Weather Forecasts",
+            "GRIB_subCentre": 0,
+            "history": "2026-03-07T16:55 GRIB to CDM+CF via cfgrib-0.9.15.1/ecCodes-2.42.0 with {\"source\": \"tmp3zgh9w_z/data.grib\", \"filter_by_keys\": {\"stream\": [\"oper\"], \"stepType\": [\"instant\"]}, \"encode_cf\": [\"parameter\", \"time\", \"geography\", \"vertical\"]}",
+            "institution": "European Centre for Medium-Range Weather Forecasts"
+        },
+        ".zgroup": {
+            "zarr_format": 2
+        },
+        "expver/.zarray": {
+            "chunks": [
+                360
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<U4",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                360
+            ],
+            "zarr_format": 2
+        },
+        "expver/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "valid_time"
+            ]
+        },
+        "latitude/.zarray": {
+            "chunks": [
+                73
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                73
+            ],
+            "zarr_format": 2
+        },
+        "latitude/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "latitude"
+            ],
+            "long_name": "latitude",
+            "standard_name": "latitude",
+            "stored_direction": "decreasing",
+            "units": "degrees_north"
+        },
+        "longitude/.zarray": {
+            "chunks": [
+                144
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                144
+            ],
+            "zarr_format": 2
+        },
+        "longitude/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "longitude"
+            ],
+            "long_name": "longitude",
+            "standard_name": "longitude",
+            "units": "degrees_east"
+        },
+        "number/.zarray": {
+            "chunks": [],
+            "compressor": null,
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [],
+            "zarr_format": 2
+        },
+        "number/.zattrs": {
+            "_ARRAY_DIMENSIONS": [],
+            "long_name": "ensemble member numerical id",
+            "standard_name": "realization",
+            "units": "1"
+        },
+        "pressure_level/.zarray": {
+            "chunks": [
+                1
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f8",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                1
+            ],
+            "zarr_format": 2
+        },
+        "pressure_level/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "pressure_level"
+            ],
+            "long_name": "pressure",
+            "positive": "down",
+            "standard_name": "air_pressure",
+            "stored_direction": "decreasing",
+            "units": "hPa"
+        },
+        "valid_time/.zarray": {
+            "chunks": [
+                360
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<i8",
+            "fill_value": null,
+            "filters": null,
+            "order": "C",
+            "shape": [
+                360
+            ],
+            "zarr_format": 2
+        },
+        "valid_time/.zattrs": {
+            "_ARRAY_DIMENSIONS": [
+                "valid_time"
+            ],
+            "calendar": "proleptic_gregorian",
+            "long_name": "time",
+            "standard_name": "time",
+            "units": "seconds since 1970-01-01"
+        },
+        "vo/.zarray": {
+            "chunks": [
+                90,
+                1,
+                19,
+                72
+            ],
+            "compressor": {
+                "blocksize": 0,
+                "clevel": 5,
+                "cname": "lz4",
+                "id": "blosc",
+                "shuffle": 1
+            },
+            "dtype": "<f4",
+            "fill_value": "NaN",
+            "filters": null,
+            "order": "C",
+            "shape": [
+                360,
+                1,
+                73,
+                144
+            ],
+            "zarr_format": 2
+        },
+        "vo/.zattrs": {
+            "GRIB_NV": 0,
+            "GRIB_Nx": 144,
+            "GRIB_Ny": 73,
+            "GRIB_cfName": "atmosphere_relative_vorticity",
+            "GRIB_cfVarName": "vo",
+            "GRIB_dataType": "an",
+            "GRIB_gridDefinitionDescription": "Latitude/Longitude Grid",
+            "GRIB_gridType": "regular_ll",
+            "GRIB_iDirectionIncrementInDegrees": 2.5,
+            "GRIB_iScansNegatively": 0,
+            "GRIB_jDirectionIncrementInDegrees": 2.5,
+            "GRIB_jPointsAreConsecutive": 0,
+            "GRIB_jScansPositively": 0,
+            "GRIB_latitudeOfFirstGridPointInDegrees": 90.0,
+            "GRIB_latitudeOfLastGridPointInDegrees": -90.0,
+            "GRIB_longitudeOfFirstGridPointInDegrees": 0.0,
+            "GRIB_longitudeOfLastGridPointInDegrees": 357.5,
+            "GRIB_missingValue": 3.4028234663852886e+38,
+            "GRIB_name": "Vorticity (relative)",
+            "GRIB_numberOfPoints": 10512,
+            "GRIB_paramId": 138,
+            "GRIB_shortName": "vo",
+            "GRIB_stepType": "instant",
+            "GRIB_stepUnits": 1,
+            "GRIB_totalNumber": 0,
+            "GRIB_typeOfLevel": "isobaricInhPa",
+            "GRIB_units": "s**-1",
+            "GRIB_uvRelativeToGrid": 0,
+            "_ARRAY_DIMENSIONS": [
+                "valid_time",
+                "pressure_level",
+                "latitude",
+                "longitude"
+            ],
+            "coordinates": "number valid_time isobaricInhPa latitude longitude expver",
+            "long_name": "Vorticity (relative)",
+            "standard_name": "atmosphere_relative_vorticity",
+            "units": "s**-1"
+        }
+    },
+    "zarr_consolidated_format": 1
+}

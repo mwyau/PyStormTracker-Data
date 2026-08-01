@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "description": "Release checksums are canonical. Download assets with scripts/download_release.py.",
+  "releases": {}
+}

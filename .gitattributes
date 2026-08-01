@@ -1,0 +1,2 @@
+*.nc export-ignore linguist-language=NetCDF
+*.grib export-ignore linguist-language=GRIB
