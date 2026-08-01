@@ -1,5 +1,22 @@
 {
   "schema_version": 1,
-  "description": "Release checksums are canonical. Download assets with scripts/download_release.py.",
-  "releases": {}
+  "description": "NetCDF and GRIB files are GitHub Release assets. Each release includes a SHA256SUMS asset.",
+  "releases": {
+    "v0.1.0-data": {
+      "summary": "Initial ERA5 DJF 2025–2026 MSL and 850 hPa vorticity snapshot.",
+      "checksum_asset": "SHA256SUMS"
+    },
+    "v0.1.1-data": {
+      "summary": "Adds 2.5-degree GRIB variants for MSL and 850 hPa vorticity.",
+      "checksum_asset": "SHA256SUMS"
+    },
+    "v0.1.2-data": {
+      "summary": "Adds 850 hPa u- and v-component wind NetCDF datasets.",
+      "checksum_asset": "SHA256SUMS"
+    },
+    "v0.1.3-data": {
+      "summary": "Adds 2.5-degree Zarr archives alongside the complete NetCDF and GRIB snapshot.",
+      "checksum_asset": "SHA256SUMS"
+    }
+  }
 }
