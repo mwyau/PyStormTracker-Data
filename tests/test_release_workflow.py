@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import sys
+import tarfile
 from pathlib import Path
 
 import pytest
@@ -10,10 +12,17 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 from fetch_era5 import load_catalog, select_entries  # noqa: E402
-from release_data import classify, next_tag, plan  # noqa: E402
+import release_data  # noqa: E402
+from release_data import classify, next_tag, plan, stage_manual_assets  # noqa: E402
 
 
 CATALOG = Path(__file__).resolve().parents[1] / "data" / "era5_requests.json"
+
+
+def test_catalog_is_valid_json() -> None:
+    catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
+    assert catalog["schema_version"] == 1
+    assert isinstance(catalog["datasets"], list)
 
 
 @pytest.fixture(scope="module")
@@ -22,9 +31,38 @@ def entries() -> list[dict[str, object]]:
 
 
 def test_catalog_has_unique_ids_and_filenames(entries: list[dict[str, object]]) -> None:
-    assert len(entries) == 8
+    assert len(entries) == 12
     assert len({entry["id"] for entry in entries}) == len(entries)
     assert len({entry["filename"] for entry in entries}) == len(entries)
+
+
+def test_n320_entries_use_complete_era5_grib_requests(entries: list[dict[str, object]]) -> None:
+    n320_entries = [entry for entry in entries if "-n320-" in entry["id"]]
+    assert {entry["id"] for entry in n320_entries} == {
+        "msl-n320-grib",
+        "vo850-n320-grib",
+    }
+    assert all(entry["source"] == "cds" for entry in n320_entries)
+    assert all(entry["dataset"] == "reanalysis-era5-complete" for entry in n320_entries)
+    assert all(entry["request"]["grid"] == "N320" for entry in n320_entries)
+
+
+def test_manual_zarr_entry_is_archived_from_its_configured_source(
+    entries: list[dict[str, object]], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    entry = next(entry for entry in entries if entry["id"] == "msl-25-zarr")
+    store = tmp_path / entry["source_path"]
+    store.mkdir()
+    (store / ".zgroup").write_text('{"zarr_format": 2}\n', encoding="utf-8")
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    monkeypatch.setattr(release_data, "ROOT", tmp_path)
+
+    stage_manual_assets(stage, [entry])
+
+    archive = stage / entry["filename"]
+    with tarfile.open(archive, "r:gz") as contents:
+        assert f"{store.name}/.zgroup" in contents.getnames()
 
 
 def test_select_entries_rejects_unknown_id(entries: list[dict[str, object]]) -> None:

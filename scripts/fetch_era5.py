@@ -11,6 +11,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "data" / "era5_requests.json"
+CATALOG_SCHEMA_VERSION = 1
+CDS_SOURCE = "cds"
+MANUAL_SOURCE = "manual"
 
 
 def load_catalog(path: Path) -> list[dict[str, Any]]:
@@ -19,18 +22,30 @@ def load_catalog(path: Path) -> list[dict[str, Any]]:
     except (OSError, json.JSONDecodeError) as error:
         raise SystemExit(f"cannot read request catalog {path}: {error}") from error
     entries = catalog.get("datasets")
-    if catalog.get("schema_version") != 1 or not isinstance(entries, list):
-        raise SystemExit("request catalog must contain schema_version 1 and a datasets list")
-    required = {"id", "summary", "filename", "dataset", "request"}
+    if catalog.get("schema_version") != CATALOG_SCHEMA_VERSION or not isinstance(entries, list):
+        raise SystemExit(
+            f"request catalog must contain schema_version {CATALOG_SCHEMA_VERSION} and a datasets list"
+        )
+    common_required = {"id", "source", "summary", "filename"}
     ids: set[str] = set()
     filenames: set[str] = set()
     for entry in entries:
-        if not isinstance(entry, dict) or required - entry.keys():
+        if not isinstance(entry, dict) or common_required - entry.keys():
             raise SystemExit(f"invalid request catalog entry: {entry!r}")
+        source = entry["source"]
+        if source == CDS_SOURCE:
+            required = {"dataset", "request"}
+            if required - entry.keys() or not isinstance(entry["request"], dict):
+                raise SystemExit(f"invalid CDS request catalog entry: {entry!r}")
+        elif source == MANUAL_SOURCE:
+            if not isinstance(entry.get("source_path"), str):
+                raise SystemExit(f"manual entry {entry['id']} must contain a source_path")
+            if entry.get("archive") not in {None, "tar.gz"}:
+                raise SystemExit(f"manual entry {entry['id']} has unsupported archive type")
+        else:
+            raise SystemExit(f"invalid source for {entry['id']}: {source!r}")
         if entry["id"] in ids or entry["filename"] in filenames:
             raise SystemExit(f"duplicate dataset ID or filename: {entry['id']}")
-        if not isinstance(entry["request"], dict):
-            raise SystemExit(f"request for {entry['id']} must be an object")
         ids.add(entry["id"])
         filenames.add(entry["filename"])
     return entries
@@ -59,12 +74,17 @@ def main() -> None:
     entries = load_catalog(args.config)
     if args.list:
         for entry in entries:
-            print(f"{entry['id']}: {entry['summary']} -> {entry['filename']}")
+            print(f"{entry['id']} [{entry['source']}]: {entry['summary']} -> {entry['filename']}")
         return
     ids = parse_ids(args.update)
     if not ids:
         parser.error("--update is required unless --list is used")
     selected = select_entries(entries, ids)
+    manual_ids = [entry["id"] for entry in selected if entry["source"] == MANUAL_SOURCE]
+    if manual_ids:
+        raise SystemExit(
+            "manual dataset ID(s) cannot be fetched from CDS: " + ", ".join(manual_ids)
+        )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     try:
         import cdsapi

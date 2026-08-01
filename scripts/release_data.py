@@ -7,12 +7,13 @@ import argparse
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import tarfile
 from pathlib import Path
 from typing import Any
 
-from fetch_era5 import DEFAULT_CONFIG, load_catalog, parse_ids
+from fetch_era5 import CDS_SOURCE, DEFAULT_CONFIG, MANUAL_SOURCE, load_catalog, parse_ids
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -75,11 +76,23 @@ def classify(entries: list[dict[str, Any]], inherited: set[str], requested: list
     return inherited_ids, new, download_ids
 
 
-def archive_zarr(stage: Path) -> None:
-    for store in sorted(ROOT.glob("*.zarr")):
-        archive = stage / f"{store.name}.tar.gz"
-        with tarfile.open(archive, "w:gz") as tar:
-            tar.add(store, arcname=store.name)
+def stage_manual_assets(stage: Path, entries: list[dict[str, Any]]) -> None:
+    for entry in entries:
+        if entry["source"] != MANUAL_SOURCE:
+            continue
+        source = ROOT / entry["source_path"]
+        target = stage / entry["filename"]
+        if not source.exists():
+            raise SystemExit(f"manual source for {entry['id']} is missing: {source}")
+        if entry.get("archive") == "tar.gz":
+            if not source.is_dir():
+                raise SystemExit(f"manual archive source for {entry['id']} must be a directory: {source}")
+            with tarfile.open(target, "w:gz") as tar:
+                tar.add(source, arcname=source.name)
+        elif source.is_file():
+            shutil.copy2(source, target)
+        else:
+            raise SystemExit(f"manual source for {entry['id']} must be a file or a tar.gz directory")
 
 
 def write_checksums(stage: Path) -> Path:
@@ -122,9 +135,12 @@ def download(args: argparse.Namespace) -> None:
     run("gh", "release", "download", build_plan["base_tag"], "--repo", args.repo, "--dir", str(stage), "--clobber")
     (stage / "SHA256SUMS").unlink(missing_ok=True)
     fetcher = ROOT / "scripts" / "fetch_era5.py"
-    if build_plan["download_ids"]:
-        run("python3", str(fetcher), "--config", str(args.config), "--output-dir", str(stage), "--update", ",".join(build_plan["download_ids"]))
-    archive_zarr(stage)
+    entries_by_id = {entry["id"]: entry for entry in load_catalog(args.config)}
+    selected = [entries_by_id[dataset_id] for dataset_id in build_plan["download_ids"]]
+    cds_ids = [entry["id"] for entry in selected if entry["source"] == CDS_SOURCE]
+    if cds_ids:
+        run("python3", str(fetcher), "--config", str(args.config), "--output-dir", str(stage), "--update", ",".join(cds_ids))
+    stage_manual_assets(stage, selected)
     write_checksums(stage)
     (stage / STATE_NAME).write_text(json.dumps(build_plan, indent=2) + "\n", encoding="utf-8")
     print(f"Prepared {build_plan['next_tag']} in {stage}")

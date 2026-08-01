@@ -1,9 +1,5 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
-
-# Local release data and Python environments are never committed.
-release-data/
-# Kept only to avoid surfacing the one-time release-migration staging area.
-release-stage/
 .venv/
+release-data/
