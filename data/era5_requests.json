@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "datasets": [
+    {
+      "id": "msl-025-netcdf",
+      "summary": "mean sea level pressure at 0.25 degrees (NetCDF)",
+      "filename": "era5_msl_2025-2026_djf_0.25x0.25.nc",
+      "dataset": "reanalysis-era5-single-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["mean_sea_level_pressure"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "grid": ["0.25", "0.25"], "data_format": "netcdf", "download_format": "unarchived"}
+    },
+    {
+      "id": "msl-25-netcdf",
+      "summary": "mean sea level pressure at 2.5 degrees (NetCDF)",
+      "filename": "era5_msl_2025-2026_djf_2.5x2.5.nc",
+      "dataset": "reanalysis-era5-single-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["mean_sea_level_pressure"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "grid": ["2.5", "2.5"], "data_format": "netcdf", "download_format": "unarchived"}
+    },
+    {
+      "id": "msl-25-grib",
+      "summary": "mean sea level pressure at 2.5 degrees (GRIB)",
+      "filename": "era5_msl_2025-2026_djf_2.5x2.5.grib",
+      "dataset": "reanalysis-era5-single-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["mean_sea_level_pressure"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "grid": ["2.5", "2.5"], "data_format": "grib", "download_format": "unarchived"}
+    },
+    {
+      "id": "uv850-025-netcdf",
+      "summary": "850 hPa u- and v-component wind at 0.25 degrees (NetCDF)",
+      "filename": "era5_uv850_2025-2026_djf_0.25x0.25.nc",
+      "dataset": "reanalysis-era5-pressure-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["u_component_of_wind", "v_component_of_wind"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "pressure_level": ["850"], "grid": ["0.25", "0.25"], "data_format": "netcdf", "download_format": "unarchived"}
+    },
+    {
+      "id": "uv850-25-netcdf",
+      "summary": "850 hPa u- and v-component wind at 2.5 degrees (NetCDF)",
+      "filename": "era5_uv850_2025-2026_djf_2.5x2.5.nc",
+      "dataset": "reanalysis-era5-pressure-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["u_component_of_wind", "v_component_of_wind"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "pressure_level": ["850"], "grid": ["2.5", "2.5"], "data_format": "netcdf", "download_format": "unarchived"}
+    },
+    {
+      "id": "vo850-025-netcdf",
+      "summary": "850 hPa vorticity at 0.25 degrees (NetCDF)",
+      "filename": "era5_vo850_2025-2026_djf_0.25x0.25.nc",
+      "dataset": "reanalysis-era5-pressure-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["vorticity"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "pressure_level": ["850"], "grid": ["0.25", "0.25"], "data_format": "netcdf", "download_format": "unarchived"}
+    },
+    {
+      "id": "vo850-25-netcdf",
+      "summary": "850 hPa vorticity at 2.5 degrees (NetCDF)",
+      "filename": "era5_vo850_2025-2026_djf_2.5x2.5.nc",
+      "dataset": "reanalysis-era5-pressure-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["vorticity"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "pressure_level": ["850"], "grid": ["2.5", "2.5"], "data_format": "netcdf", "download_format": "unarchived"}
+    },
+    {
+      "id": "vo850-25-grib",
+      "summary": "850 hPa vorticity at 2.5 degrees (GRIB)",
+      "filename": "era5_vo850_2025-2026_djf_2.5x2.5.grib",
+      "dataset": "reanalysis-era5-pressure-levels",
+      "request": {"product_type": ["reanalysis"], "variable": ["vorticity"], "date": "2025-12-01/2026-02-28", "time": ["00:00", "06:00", "12:00", "18:00"], "pressure_level": ["850"], "grid": ["2.5", "2.5"], "data_format": "grib", "download_format": "unarchived"}
+    }
+  ]
+}

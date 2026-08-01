@@ -1,5 +1,8 @@
 __pycache__/
 *.py[cod]
 
-# Local release staging directories contain large generated data assets.
+# Local release data and Python environments are never committed.
+release-data/
+# Kept only to avoid surfacing the one-time release-migration staging area.
 release-stage/
+.venv/

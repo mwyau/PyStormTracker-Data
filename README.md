@@ -8,7 +8,48 @@ Large NetCDF (`.nc`) and GRIB (`.grib`) data files are published as GitHub Relea
 python3 scripts/download_release.py v0.1.3-data --output-dir data
 ```
 
-The command downloads the files listed in the release's `SHA256SUMS` asset and verifies every checksum. See `scripts/release_data.py --help` for the local release-building workflow.
+The command downloads the files listed in the release's `SHA256SUMS` asset and verifies every checksum.
+
+## Building a data release
+
+Install the [uv](https://docs.astral.sh/uv/) Python package manager, then create a local environment and install the ECMWF CDS client:
+
+```bash
+uv venv
+uv pip install "cdsapi>=0.7.7"
+source .venv/bin/activate
+```
+
+Create an ECMWF/CDS account and accept the terms for each ERA5 dataset used by this repository. While signed in, copy the API settings shown by ECMWF into `~/.cdsapirc`:
+
+```yaml
+url: https://ecds.ecmwf.int/api
+key: <PERSONAL-ACCESS-TOKEN>
+```
+
+See the [ECMWF CDS API setup guide](https://ecds.ecmwf.int/how-to-api) for account, token, and dataset-licence details. Do not commit this file or its token.
+
+The release workflow has three separate stages. `release-data/` is ignored by Git and holds all downloaded/generated assets.
+
+1. Inspect the next complete snapshot without changing files or publishing anything:
+
+   ```bash
+   python3 scripts/release_data.py dry-run --update uv850-025-netcdf
+   ```
+
+2. Download the latest Release into `release-data/`, then regenerate the selected data from ECMWF. New request-catalog entries are downloaded automatically because no prior Release asset exists for them:
+
+   ```bash
+   python3 scripts/release_data.py download --update uv850-025-netcdf
+   ```
+
+3. Verify and publish the prepared snapshot. This automatically increments the patch tag (for example, `v0.1.3-data` becomes `v0.1.4-data`) and does not call ECMWF:
+
+   ```bash
+   python3 scripts/release_data.py release
+   ```
+
+Run `python3 scripts/fetch_era5.py --list` to see dataset IDs. Request definitions live in [data/era5_requests.json](data/era5_requests.json); add an entry there to add a new dataset.
 
 ## Datasets
 
