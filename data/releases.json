@@ -17,6 +17,10 @@
     "v0.1.3-data": {
       "summary": "Adds 2.5-degree Zarr archives alongside the complete NetCDF and GRIB snapshot.",
       "checksum_asset": "SHA256SUMS"
+    },
+    "v0.1.4-data": {
+      "summary": "Adds native N320 reduced-Gaussian-grid GRIB assets for MSL and 850 hPa vorticity.",
+      "checksum_asset": "SHA256SUMS"
     }
   }
 }

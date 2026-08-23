@@ -3,3 +3,6 @@
 
 # Zarr stores are distributed as Release archives, not source archives.
 *.zarr export-ignore
+
+# Exact TRACK 1.5.4 reference texts retain the producer's trailing spaces.
+parity/track-1.5.4/*.txt -whitespace

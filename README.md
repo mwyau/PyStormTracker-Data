@@ -1,13 +1,20 @@
 # PyStormTracker-Data
 
-This repository hosts dataset recipes, Zarr stores, and release metadata used by [PyStormTracker](https://github.com/mwyau/PyStormTracker).
+This repository is the canonical home for PyStormTracker's external scientific
+and reference data. It hosts dataset recipes, compact Git-tracked parity
+references, and release metadata used by [PyStormTracker](https://github.com/mwyau/PyStormTracker).
+
+The deliberate exception is
+`PyStormTracker/tests/data/era5/era5_msl_2025-12_2.5x2.5.nc`. That December
+NetCDF remains in the software repository as its ordinary fully-offline
+integration-test input.
 
 ## Building a data release
 
-Install the ECMWF CDS client:
+Install the repository tools with `uv`:
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 Create an ECMWF/CDS account and accept the terms for each ERA5 dataset used by this repository. While signed in, copy the API settings shown by ECMWF into `~/.cdsapirc`:
@@ -21,25 +28,62 @@ See the [ECMWF CDS API setup guide](https://ecds.ecmwf.int/how-to-api) for accou
 
 The release workflow has three separate stages. `release-data/` is ignored by Git and holds all downloaded/generated assets.
 
-1. Inspect the next complete snapshot without changing files or publishing anything:
+1. Inspect the next complete snapshot without changing files or publishing anything. Use `--next-tag` for an intentional minor or major release (the current recovery release is `v0.2.0-data`):
 
    ```bash
-   python3 scripts/release_data.py dry-run --update uv850-025-netcdf
+   uv run python scripts/release_data.py dry-run --next-tag v0.2.0-data --update uv850-025-netcdf
    ```
 
 2. Download the latest Release into `release-data/`, then regenerate the selected data from ECMWF. New request-catalog entries are downloaded automatically because no prior Release asset exists for them:
 
    ```bash
-   python3 scripts/release_data.py download --update uv850-025-netcdf
+   uv run python scripts/release_data.py download --next-tag v0.2.0-data --update uv850-025-netcdf
    ```
 
-3. Verify and publish the prepared snapshot. This automatically increments the patch tag (for example, `v0.1.3-data` becomes `v0.1.4-data`) and does not call ECMWF:
+3. Review the prepared assets and `SHA256SUMS`, then explicitly confirm that review to publish. It uses the tag recorded during staging and does not call ECMWF:
 
    ```bash
-   python3 scripts/release_data.py release
+   uv run python scripts/release_data.py release --confirm-reviewed
    ```
 
-Run `python3 scripts/fetch_era5.py --list` to see dataset IDs. Request definitions live in [data/era5_requests.json](data/era5_requests.json). The file is formatted one field per line so the request parameters are easy to review.
+Run `uv run python scripts/fetch_era5.py --list` to see release asset, Git
+reference, and logical dataset IDs. Definitions live in
+[data/era5_requests.json](data/era5_requests.json). The file is formatted one
+field per line so the request parameters are easy to review.
+
+### 2024 F320 assets
+
+The logical datasets `era5-msl-2024-f320` and `era5-vo850-2024-f320` are
+distributed as twelve monthly NetCDF assets each. Their canonical filenames
+use `era5_<variable>_<period>_<grid>.nc`, for example
+`era5_msl_2024-01_f320.nc` and `era5_vo850_2024-01_f320.nc`.
+
+Materialize a staged set only from the verified full-year F320 source pair
+(annual NetCDF plus GRIB) with:
+
+```bash
+uv run --with-requirements requirements.txt python scripts/materialize_f320_2024.py \
+  --source-dir ../PyStormTracker-Reference-Data/era5-2024
+```
+
+The command verifies source checksums, GRIB variable/level/grid identity,
+F320 geometry, and timestamps. It writes direct contiguous monthly value
+slices without regridding or resampling under `prepared/f320-2024/`. It does
+not contact CDS and refuses to overwrite an existing monthly file that does
+not match the expected metadata. Validate an already prepared set with
+`--verify-only`.
+
+TRACK or Validation workflows that retain their historic working filenames can
+materialize local annual inputs from the canonical monthly assets without
+renaming the Data assets:
+
+```bash
+uv run --with-requirements requirements.txt python scripts/materialize_track_f320_2024.py \
+  --input-dir prepared/f320-2024 --output-dir /path/to/local-track-inputs
+```
+
+This produces `ERA5_mslp_6hr_2024_DET.nc` and
+`ERA5_vo850_6hr_2024_DET.nc` only in the specified working directory.
 
 ### Manual assets
 
@@ -63,7 +107,7 @@ The staged release always generates `SHA256SUMS` from its final assets. Do not a
 Run the test suite with pytest:
 
 ```bash
-pytest
+uv run --with-requirements requirements.txt pytest
 ```
 
 ## Datasets
@@ -77,6 +121,17 @@ This dataset includes Mean Sea Level Pressure (MSL) and 850 hPa Vorticity (VO) d
   - `2.5x2.5` degrees (Coarse resolution)
 - **Source:** [ERA5 Reanalysis](https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5)
 - **Format:** NetCDF4 (.nc)
+
+### Compact parity references
+
+Small reference trajectories are tracked in `parity/`, organized by their
+actual producer. TRACK 1.5.4 trajectories and historical PyStormTracker
+version-parity outputs are distinct. The `reference/ncl/` files are retained
+NCL/Spherepack reference fields; their reproduction methodology is maintained
+in `PyStormTracker-Validation`, not the software test suite.
+
+See [data/provenance/2026-08-23-recovery-audit.md](data/provenance/2026-08-23-recovery-audit.md)
+for recovered-data disposition and provenance.
 
 ## License
 

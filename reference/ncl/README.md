@@ -12,5 +12,10 @@ NCL 6.6.2 using `shaeC`/`shseC` and the documented T0-42 or T5-42 truncation.
 
 Reference-generation methodology is maintained in the sibling
 `PyStormTracker-Validation/scripts/ncl/` directory. These files are direct
-reference inputs for the package parity tests; no manifest or checksum
-registry is required here.
+reference inputs for the package parity tests. Their Git-tracked paths,
+producer, source inputs, and regeneration script are recorded in
+`data/era5_requests.json` under `git_references` and
+`ncl-spherepack-msl-2025-12-parity`.
+
+The separate 2.5-degree T5-42 smoke reference remains deliberately bundled
+with `PyStormTracker/tests/data/ncl/`; it is not duplicated here.

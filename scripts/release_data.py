@@ -9,11 +9,20 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 from pathlib import Path
 from typing import Any
 
-from fetch_era5 import CDS_SOURCE, DEFAULT_CONFIG, MANUAL_SOURCE, load_catalog, parse_ids
+from fetch_era5 import (
+    CDS_SOURCE,
+    DEFAULT_CONFIG,
+    MANUAL_SOURCE,
+    load_catalog,
+    load_catalog_document,
+    parse_ids,
+    resolve_release_entries,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +69,13 @@ def next_tag(tag: str) -> str:
     return f"v{major}.{minor}.{patch + 1}-data"
 
 
+def tag_version(tag: str) -> tuple[int, int, int]:
+    match = TAG_PATTERN.fullmatch(tag)
+    if not match:
+        raise ValueError(f"not a data tag: {tag}")
+    return tuple(map(int, match.groups()))
+
+
 def release_assets(repo: str, tag: str) -> set[str]:
     release = json.loads(output("gh", "api", f"repos/{repo}/releases/tags/{tag}"))
     return {asset["name"] for asset in release["assets"]}
@@ -104,17 +120,30 @@ def write_checksums(stage: Path) -> Path:
     return manifest
 
 
-def plan(repo: str, config: Path, requested: list[str]) -> dict[str, Any]:
-    entries = load_catalog(config)
+def plan(
+    repo: str,
+    config: Path,
+    requested: list[str],
+    requested_next_tag: str | None = None,
+) -> dict[str, Any]:
+    catalog = load_catalog_document(config)
+    entries = catalog["datasets"]
+    requested_entries = resolve_release_entries(catalog, requested)
+    requested_asset_ids = [entry["id"] for entry in requested_entries]
     base = latest_release(repo)
     inherited = release_assets(repo, base["tag_name"])
-    inherited_ids, new_ids, download_ids = classify(entries, inherited, requested)
+    inherited_ids, new_ids, download_ids = classify(entries, inherited, requested_asset_ids)
     summaries = {entry["id"]: entry["summary"] for entry in entries}
     changed = [dataset_id for dataset_id in download_ids]
     note = "Data update: " + "; ".join(summaries[dataset_id] for dataset_id in changed) + "."
+    if requested_next_tag is not None and not TAG_PATTERN.fullmatch(requested_next_tag):
+        raise SystemExit(f"not a data tag: {requested_next_tag}")
+    target_tag = requested_next_tag or next_tag(base["tag_name"])
+    if tag_version(target_tag) <= tag_version(base["tag_name"]):
+        raise SystemExit("next release tag must be newer than the published base tag")
     return {
         "base_tag": base["tag_name"],
-        "next_tag": next_tag(base["tag_name"]),
+        "next_tag": target_tag,
         "inherited_ids": inherited_ids,
         "new_ids": new_ids,
         "download_ids": download_ids,
@@ -123,7 +152,7 @@ def plan(repo: str, config: Path, requested: list[str]) -> dict[str, Any]:
 
 
 def dry_run(args: argparse.Namespace) -> None:
-    print(json.dumps(plan(args.repo, args.config, parse_ids(args.update)), indent=2))
+    print(json.dumps(plan(args.repo, args.config, parse_ids(args.update), args.next_tag), indent=2))
 
 
 def download(args: argparse.Namespace) -> None:
@@ -131,7 +160,7 @@ def download(args: argparse.Namespace) -> None:
     if stage.exists() and any(stage.iterdir()):
         raise SystemExit(f"{stage} is not empty; remove its previous contents before downloading")
     stage.mkdir(parents=True, exist_ok=True)
-    build_plan = plan(args.repo, args.config, parse_ids(args.update))
+    build_plan = plan(args.repo, args.config, parse_ids(args.update), args.next_tag)
     run("gh", "release", "download", build_plan["base_tag"], "--repo", args.repo, "--dir", str(stage), "--clobber")
     (stage / "SHA256SUMS").unlink(missing_ok=True)
     fetcher = ROOT / "scripts" / "fetch_era5.py"
@@ -139,7 +168,7 @@ def download(args: argparse.Namespace) -> None:
     selected = [entries_by_id[dataset_id] for dataset_id in build_plan["download_ids"]]
     cds_ids = [entry["id"] for entry in selected if entry["source"] == CDS_SOURCE]
     if cds_ids:
-        run("python3", str(fetcher), "--config", str(args.config), "--output-dir", str(stage), "--update", ",".join(cds_ids))
+        run(sys.executable, str(fetcher), "--config", str(args.config), "--output-dir", str(stage), "--update", ",".join(cds_ids))
     stage_manual_assets(stage, selected)
     write_checksums(stage)
     (stage / STATE_NAME).write_text(json.dumps(build_plan, indent=2) + "\n", encoding="utf-8")
@@ -147,13 +176,15 @@ def download(args: argparse.Namespace) -> None:
 
 
 def release(args: argparse.Namespace) -> None:
+    if not args.confirm_reviewed:
+        raise SystemExit("review the staged assets and SHA256SUMS, then rerun with --confirm-reviewed")
     stage = args.stage.resolve()
     state_path = stage / STATE_NAME
     if not state_path.is_file():
         raise SystemExit(f"{state_path} is missing; run the download stage first")
     state = json.loads(state_path.read_text(encoding="utf-8"))
     current = latest_release(args.repo)["tag_name"]
-    if current != state["base_tag"] or next_tag(current) != state["next_tag"]:
+    if current != state["base_tag"] or tag_version(state["next_tag"]) <= tag_version(current):
         raise SystemExit("prepared data is stale; run dry-run and download again")
     manifest = stage / "SHA256SUMS"
     if not manifest.is_file():
@@ -174,19 +205,33 @@ def add_common(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--stage", type=Path, default=DEFAULT_STAGE)
 
 
+def add_next_tag(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--next-tag",
+        help="explicit release tag; defaults to the next patch data tag",
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(required=True)
     dry_parser = commands.add_parser("dry-run", help="inspect a release build without writing files")
     add_common(dry_parser)
+    add_next_tag(dry_parser)
     dry_parser.add_argument("--update", action="append", default=[], metavar="ID[,ID]")
     dry_parser.set_defaults(handler=dry_run)
     download_parser = commands.add_parser("download", help="download the base release and requested ECMWF data")
     add_common(download_parser)
+    add_next_tag(download_parser)
     download_parser.add_argument("--update", action="append", default=[], metavar="ID[,ID]")
     download_parser.set_defaults(handler=download)
     release_parser = commands.add_parser("release", help="publish a prepared release-data directory")
     add_common(release_parser)
+    release_parser.add_argument(
+        "--confirm-reviewed",
+        action="store_true",
+        help="confirm that the staged assets and SHA256SUMS have been reviewed",
+    )
     release_parser.set_defaults(handler=release)
     args = parser.parse_args()
     args.handler(args)
