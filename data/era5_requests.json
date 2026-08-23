@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "description": "Catalog of release assets, Git-tracked compact references, and logical datasets. CDS entries are downloaded by fetch_era5.py; manual entries are copied or archived by release_data.py.",
+  "schema_version": 1,
+  "description": "Physical ERA5 acquisition entries and release filenames. Small parity files and Git-tracked Zarr stores are addressed by their repository paths.",
   "datasets": [
     {
       "id": "msl-025-netcdf",
@@ -9,11 +9,23 @@
       "filename": "era5_msl_2025-2026_djf_0.25x0.25.nc",
       "dataset": "reanalysis-era5-single-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["mean_sea_level_pressure"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "mean_sea_level_pressure"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "grid": ["0.25", "0.25"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "grid": [
+          "0.25",
+          "0.25"
+        ],
         "data_format": "netcdf",
         "download_format": "unarchived"
       }
@@ -25,11 +37,23 @@
       "filename": "era5_msl_2025-2026_djf_2.5x2.5.nc",
       "dataset": "reanalysis-era5-single-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["mean_sea_level_pressure"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "mean_sea_level_pressure"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "grid": ["2.5", "2.5"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "grid": [
+          "2.5",
+          "2.5"
+        ],
         "data_format": "netcdf",
         "download_format": "unarchived"
       }
@@ -41,11 +65,23 @@
       "filename": "era5_msl_2025-2026_djf_2.5x2.5.grib",
       "dataset": "reanalysis-era5-single-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["mean_sea_level_pressure"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "mean_sea_level_pressure"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "grid": ["2.5", "2.5"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "grid": [
+          "2.5",
+          "2.5"
+        ],
         "data_format": "grib",
         "download_format": "unarchived"
       }
@@ -75,12 +111,27 @@
       "filename": "era5_uv850_2025-2026_djf_0.25x0.25.nc",
       "dataset": "reanalysis-era5-pressure-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["u_component_of_wind", "v_component_of_wind"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "u_component_of_wind",
+          "v_component_of_wind"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "pressure_level": ["850"],
-        "grid": ["0.25", "0.25"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "pressure_level": [
+          "850"
+        ],
+        "grid": [
+          "0.25",
+          "0.25"
+        ],
         "data_format": "netcdf",
         "download_format": "unarchived"
       }
@@ -92,12 +143,27 @@
       "filename": "era5_uv850_2025-2026_djf_2.5x2.5.nc",
       "dataset": "reanalysis-era5-pressure-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["u_component_of_wind", "v_component_of_wind"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "u_component_of_wind",
+          "v_component_of_wind"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "pressure_level": ["850"],
-        "grid": ["2.5", "2.5"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "pressure_level": [
+          "850"
+        ],
+        "grid": [
+          "2.5",
+          "2.5"
+        ],
         "data_format": "netcdf",
         "download_format": "unarchived"
       }
@@ -109,12 +175,26 @@
       "filename": "era5_vo850_2025-2026_djf_0.25x0.25.nc",
       "dataset": "reanalysis-era5-pressure-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["vorticity"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "vorticity"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "pressure_level": ["850"],
-        "grid": ["0.25", "0.25"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "pressure_level": [
+          "850"
+        ],
+        "grid": [
+          "0.25",
+          "0.25"
+        ],
         "data_format": "netcdf",
         "download_format": "unarchived"
       }
@@ -126,12 +206,26 @@
       "filename": "era5_vo850_2025-2026_djf_2.5x2.5.nc",
       "dataset": "reanalysis-era5-pressure-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["vorticity"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "vorticity"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "pressure_level": ["850"],
-        "grid": ["2.5", "2.5"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "pressure_level": [
+          "850"
+        ],
+        "grid": [
+          "2.5",
+          "2.5"
+        ],
         "data_format": "netcdf",
         "download_format": "unarchived"
       }
@@ -143,12 +237,26 @@
       "filename": "era5_vo850_2025-2026_djf_2.5x2.5.grib",
       "dataset": "reanalysis-era5-pressure-levels",
       "request": {
-        "product_type": ["reanalysis"],
-        "variable": ["vorticity"],
+        "product_type": [
+          "reanalysis"
+        ],
+        "variable": [
+          "vorticity"
+        ],
         "date": "2025-12-01/2026-02-28",
-        "time": ["00:00", "06:00", "12:00", "18:00"],
-        "pressure_level": ["850"],
-        "grid": ["2.5", "2.5"],
+        "time": [
+          "00:00",
+          "06:00",
+          "12:00",
+          "18:00"
+        ],
+        "pressure_level": [
+          "850"
+        ],
+        "grid": [
+          "2.5",
+          "2.5"
+        ],
         "data_format": "grib",
         "download_format": "unarchived"
       }
@@ -173,294 +281,628 @@
       }
     },
     {
-      "id": "msl-25-zarr",
-      "source": "manual",
-      "summary": "mean sea level pressure at 2.5 degrees (Zarr archive)",
-      "filename": "era5_msl_2025-2026_djf_2.5x2.5.zarr.tar.gz",
-      "source_path": "era5_msl_2025-2026_djf_2.5x2.5.zarr",
-      "archive": "tar.gz"
-    },
-    {
-      "id": "vo850-25-zarr",
-      "source": "manual",
-      "summary": "850 hPa vorticity at 2.5 degrees (Zarr archive)",
-      "filename": "era5_vo850_2025-2026_djf_2.5x2.5.zarr.tar.gz",
-      "source_path": "era5_vo850_2025-2026_djf_2.5x2.5.zarr",
-      "archive": "tar.gz"
-    },
-    {
-      "id": "era5-msl-2024-f320-01",
-      "source": "manual",
-      "summary": "January 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-01",
+      "source": "cds",
+      "summary": "January 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-01_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-01_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 1,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-01-01/to/2024-01-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-02",
-      "source": "manual",
-      "summary": "February 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-02",
+      "source": "cds",
+      "summary": "February 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-02_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-02_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 2,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-02-01/to/2024-02-29",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-03",
-      "source": "manual",
-      "summary": "March 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-03",
+      "source": "cds",
+      "summary": "March 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-03_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-03_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 3,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-03-01/to/2024-03-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-04",
-      "source": "manual",
-      "summary": "April 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-04",
+      "source": "cds",
+      "summary": "April 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-04_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-04_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 4,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-04-01/to/2024-04-30",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-05",
-      "source": "manual",
-      "summary": "May 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-05",
+      "source": "cds",
+      "summary": "May 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-05_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-05_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 5,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-05-01/to/2024-05-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-06",
-      "source": "manual",
-      "summary": "June 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-06",
+      "source": "cds",
+      "summary": "June 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-06_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-06_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 6,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-06-01/to/2024-06-30",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-07",
-      "source": "manual",
-      "summary": "July 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-07",
+      "source": "cds",
+      "summary": "July 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-07_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-07_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 7,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-07-01/to/2024-07-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-08",
-      "source": "manual",
-      "summary": "August 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-08",
+      "source": "cds",
+      "summary": "August 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-08_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-08_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 8,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-08-01/to/2024-08-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-09",
-      "source": "manual",
-      "summary": "September 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-09",
+      "source": "cds",
+      "summary": "September 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-09_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-09_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 9,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-09-01/to/2024-09-30",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-10",
-      "source": "manual",
-      "summary": "October 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-10",
+      "source": "cds",
+      "summary": "October 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-10_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-10_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 10,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-10-01/to/2024-10-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-11",
-      "source": "manual",
-      "summary": "November 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-11",
+      "source": "cds",
+      "summary": "November 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-11_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-11_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 11,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-11-01/to/2024-11-30",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-msl-2024-f320-12",
-      "source": "manual",
-      "summary": "December 2024 mean sea level pressure on F320 (NetCDF)",
+      "id": "msl-f320-2024-12",
+      "source": "cds",
+      "summary": "December 2024 mean sea level pressure on F320 (monthly NetCDF)",
       "filename": "era5_msl_2024-12_f320.nc",
-      "source_path": "prepared/f320-2024/era5_msl_2024-12_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 12,
+      "variable": "msl",
+      "units": "Pa",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-12-01/to/2024-12-31",
+        "expver": "1",
+        "levtype": "sfc",
+        "param": "151.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-01",
-      "source": "manual",
-      "summary": "January 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-01",
+      "source": "cds",
+      "summary": "January 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-01_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-01_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 1,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-01-01/to/2024-01-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-02",
-      "source": "manual",
-      "summary": "February 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-02",
+      "source": "cds",
+      "summary": "February 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-02_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-02_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 2,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-02-01/to/2024-02-29",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-03",
-      "source": "manual",
-      "summary": "March 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-03",
+      "source": "cds",
+      "summary": "March 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-03_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-03_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 3,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-03-01/to/2024-03-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-04",
-      "source": "manual",
-      "summary": "April 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-04",
+      "source": "cds",
+      "summary": "April 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-04_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-04_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 4,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-04-01/to/2024-04-30",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-05",
-      "source": "manual",
-      "summary": "May 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-05",
+      "source": "cds",
+      "summary": "May 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-05_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-05_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 5,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-05-01/to/2024-05-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-06",
-      "source": "manual",
-      "summary": "June 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-06",
+      "source": "cds",
+      "summary": "June 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-06_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-06_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 6,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-06-01/to/2024-06-30",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-07",
-      "source": "manual",
-      "summary": "July 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-07",
+      "source": "cds",
+      "summary": "July 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-07_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-07_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 7,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-07-01/to/2024-07-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-08",
-      "source": "manual",
-      "summary": "August 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-08",
+      "source": "cds",
+      "summary": "August 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-08_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-08_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 8,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-08-01/to/2024-08-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-09",
-      "source": "manual",
-      "summary": "September 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-09",
+      "source": "cds",
+      "summary": "September 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-09_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-09_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 9,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-09-01/to/2024-09-30",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-10",
-      "source": "manual",
-      "summary": "October 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-10",
+      "source": "cds",
+      "summary": "October 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-10_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-10_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 10,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-10-01/to/2024-10-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-11",
-      "source": "manual",
-      "summary": "November 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-11",
+      "source": "cds",
+      "summary": "November 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-11_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-11_f320.nc"
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 11,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-11-01/to/2024-11-30",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     },
     {
-      "id": "era5-vo850-2024-f320-12",
-      "source": "manual",
-      "summary": "December 2024 850 hPa relative vorticity on F320 (NetCDF)",
+      "id": "vo850-f320-2024-12",
+      "source": "cds",
+      "summary": "December 2024 850 hPa relative vorticity on F320 (monthly NetCDF)",
       "filename": "era5_vo850_2024-12_f320.nc",
-      "source_path": "prepared/f320-2024/era5_vo850_2024-12_f320.nc"
-    }
-  ],
-  "git_references": [
-    {
-      "id": "ncl-msl-2025-12-01-025-raw",
-      "path": "reference/ncl/era5_msl_2025-12-01_0000_0.25x0.25.nc",
-      "summary": "ERA5 MSL source frame for NCL/Spherepack parity at 0.25 degrees",
-      "provenance": {"producer": "ECMWF ERA5", "purpose": "NCL/Spherepack parity source", "regeneration": "PyStormTracker-Validation/scripts/ncl/generate_msl_spectral_references.ncl"}
-    },
-    {
-      "id": "ncl-msl-2025-12-01-025-t0-42",
-      "path": "reference/ncl/era5_msl_2025-12-01_0000_0.25x0.25_t0-42.nc",
-      "summary": "NCL/Spherepack MSL T0-42 reference at 0.25 degrees",
-      "provenance": {"producer": "NCL 6.6.2 shaeC/shseC", "configuration": "T0-42", "regeneration": "PyStormTracker-Validation/scripts/ncl/generate_msl_spectral_references.ncl"}
-    },
-    {
-      "id": "ncl-msl-2025-12-01-025-t5-42",
-      "path": "reference/ncl/era5_msl_2025-12-01_0000_0.25x0.25_t5-42.nc",
-      "summary": "NCL/Spherepack MSL T5-42 reference at 0.25 degrees",
-      "provenance": {"producer": "NCL 6.6.2 shaeC/shseC", "configuration": "T5-42", "regeneration": "PyStormTracker-Validation/scripts/ncl/generate_msl_spectral_references.ncl"}
-    },
-    {
-      "id": "ncl-msl-2025-12-01-25-t0-42",
-      "path": "reference/ncl/era5_msl_2025-12-01_0000_2.5x2.5_t0-42.nc",
-      "summary": "NCL/Spherepack MSL T0-42 reference at 2.5 degrees",
-      "provenance": {"producer": "NCL 6.6.2 shaeC/shseC", "configuration": "T0-42", "regeneration": "PyStormTracker-Validation/scripts/ncl/generate_msl_spectral_references.ncl"}
-    },
-    {
-      "id": "pystormtracker-v0.0.2-msl-imilast",
-      "path": "parity/pystormtracker-v0.0.2/era5_msl_2025-2026_djf_2.5x2.5_imilast.txt",
-      "summary": "Historical PyStormTracker v0.0.2 MSL trajectory in IMILAST text",
-      "provenance": {"producer": "PyStormTracker v0.0.2", "format": "IMILAST text", "source_input": "ERA5 MSL DJF 2025-2026 at 2.5 degrees", "history_commit": "e0393539d30d247b0c521ed68dcbfacf2f5471c7"}
-    },
-    {
-      "id": "pystormtracker-v0.0.2-vo850-imilast",
-      "path": "parity/pystormtracker-v0.0.2/era5_vo850_2025-2026_djf_2.5x2.5_1e-4_imilast.txt",
-      "summary": "Historical PyStormTracker v0.0.2 VO850 trajectory in IMILAST text",
-      "provenance": {"producer": "PyStormTracker v0.0.2", "format": "IMILAST text", "source_input": "ERA5 850 hPa vorticity DJF 2025-2026 at 2.5 degrees, threshold 1e-4", "history_commit": "e0393539d30d247b0c521ed68dcbfacf2f5471c7"}
-    },
-    {
-      "id": "pystormtracker-v0.5.0.dev-msl-imilast",
-      "path": "parity/pystormtracker-v0.5.0.dev/era5_msl_2025-2026_djf_2.5x2.5_imilast.txt",
-      "summary": "Historical PyStormTracker v0.5.0.dev MSL trajectory in IMILAST text",
-      "provenance": {"producer": "PyStormTracker v0.5.0.dev", "format": "IMILAST text", "source_input": "ERA5 MSL DJF 2025-2026 at 2.5 degrees", "history_commit": "84550209af98aadf1bb17d445475b77f42009a0f", "note": "The legacy filename used Hodges as an algorithm label; this is not TRACK output."}
-    },
-    {
-      "id": "pystormtracker-v0.5.0.dev-msl-track-format",
-      "path": "parity/pystormtracker-v0.5.0.dev/era5_msl_2025-2026_djf_2.5x2.5_track-format.txt",
-      "summary": "Historical PyStormTracker v0.5.0.dev MSL trajectory in Hodges/TRACK text format",
-      "provenance": {"producer": "PyStormTracker v0.5.0.dev", "format": "Hodges/TRACK text format", "source_input": "ERA5 MSL DJF 2025-2026 at 2.5 degrees", "history_commit": "196a0d8df5a9a981d820e3d293cb09ebcbe45564", "note": "Format compatibility does not indicate TRACK provenance."}
-    },
-    {
-      "id": "pystormtracker-v0.5.0.dev-msl-trackjson",
-      "path": "parity/pystormtracker-v0.5.0.dev/era5_msl_2025-2026_djf_2.5x2.5.trackjson",
-      "summary": "Historical PyStormTracker MSL TrackJSON reference",
-      "provenance": {"producer": "PyStormTracker v0.5.0.dev lineage", "format": "TrackJSON", "source_input": "ERA5 MSL DJF 2025-2026 at 2.5 degrees", "history_commit": "a0e41e06cc7fa677aee782b956e772cff9a0c6f0", "note": "Historical producer version is inferred from the package version at the adding commit."}
-    },
-    {
-      "id": "track-1.5.4-f320-t42-jan-final-negative",
-      "path": "parity/track-1.5.4/era5_msl_2024-01_f320-t42_final-negative.txt",
-      "summary": "TRACK 1.5.4 final negative MSL trajectories for the January 2024 F320-to-T42 campaign",
-      "provenance": {"producer": "TRACK 1.5.4", "source_revision": "6ded301a5f5183d73e5b49c16019024b9a53eff7", "source_input": "ERA5 MSL January 2024 F320, T42 spectral field", "configuration": "cft42jan, 62-frame chunks, RSPLICE", "source_result": "PyStormTracker-Validation/results/track_comparison-20260818/complete/f320-t42-jan/tracking/cft42jan/ff_trs_neg.gz"}
-    },
-    {
-      "id": "track-1.5.4-f320-t42-jan-final-positive",
-      "path": "parity/track-1.5.4/era5_msl_2024-01_f320-t42_final-positive.txt",
-      "summary": "TRACK 1.5.4 final positive MSL trajectories for the January 2024 F320-to-T42 campaign",
-      "provenance": {"producer": "TRACK 1.5.4", "source_revision": "6ded301a5f5183d73e5b49c16019024b9a53eff7", "source_input": "ERA5 MSL January 2024 F320, T42 spectral field", "configuration": "cft42jan, 62-frame chunks, RSPLICE", "source_result": "PyStormTracker-Validation/results/track_comparison-20260818/complete/f320-t42-jan/tracking/cft42jan/ff_trs_pos.gz"}
-    }
-  ],
-  "logical_datasets": [
-    {
-      "id": "era5-msl-2024-f320",
-      "summary": "Complete 2024 ERA5 mean sea level pressure on the F320 full Gaussian grid in twelve monthly NetCDF assets",
-      "assets": ["era5-msl-2024-f320-01", "era5-msl-2024-f320-02", "era5-msl-2024-f320-03", "era5-msl-2024-f320-04", "era5-msl-2024-f320-05", "era5-msl-2024-f320-06", "era5-msl-2024-f320-07", "era5-msl-2024-f320-08", "era5-msl-2024-f320-09", "era5-msl-2024-f320-10", "era5-msl-2024-f320-11", "era5-msl-2024-f320-12"],
-      "provenance": {"producer": "ECMWF ERA5 Complete", "variable": "msl", "units": "Pa", "grid": "F320 full Gaussian (1280 x 640)", "cadence": "6-hourly", "coverage": "2024-01-01 00:00 through 2024-12-31 18:00; 1464 frames", "source_netcdf_sha256": "a2843cd3277da18b1b9e4c1ac5697e5785bbe65d8879aa3b793ee66280d3b6ff", "source_grib_sha256": "036dbc83a0b9c0f3d1361c6785611ec16199bff3a4f7e98bfe6b07e929f564a8", "materialization": "scripts/materialize_f320_2024.py"}
-    },
-    {
-      "id": "era5-vo850-2024-f320",
-      "summary": "Complete 2024 ERA5 850 hPa relative vorticity on the F320 full Gaussian grid in twelve monthly NetCDF assets",
-      "assets": ["era5-vo850-2024-f320-01", "era5-vo850-2024-f320-02", "era5-vo850-2024-f320-03", "era5-vo850-2024-f320-04", "era5-vo850-2024-f320-05", "era5-vo850-2024-f320-06", "era5-vo850-2024-f320-07", "era5-vo850-2024-f320-08", "era5-vo850-2024-f320-09", "era5-vo850-2024-f320-10", "era5-vo850-2024-f320-11", "era5-vo850-2024-f320-12"],
-      "provenance": {"producer": "ECMWF ERA5 Complete", "variable": "vo", "pressure_level_hpa": 850, "units": "s**-1", "grid": "F320 full Gaussian (1280 x 640)", "cadence": "6-hourly", "coverage": "2024-01-01 00:00 through 2024-12-31 18:00; 1464 frames", "source_netcdf_sha256": "9bb8aac8ba89398c731643fd475a157a2d421abe379e77039b8b8636c9026554", "source_grib_sha256": "c53c690ca9a98582fdbb0026d26d7296a5feb77c1de4a5b09c6d9189d09ed420", "materialization": "scripts/materialize_f320_2024.py"}
-    },
-    {
-      "id": "ncl-spherepack-msl-2025-12-parity",
-      "summary": "Git-tracked NCL/Spherepack MSL parity source and retained T0-42 references",
-      "assets": ["ncl-msl-2025-12-01-025-raw", "ncl-msl-2025-12-01-025-t0-42", "ncl-msl-2025-12-01-025-t5-42", "ncl-msl-2025-12-01-25-t0-42"],
-      "provenance": {"producer": "NCL 6.6.2", "methodology": "PyStormTracker-Validation/scripts/ncl/generate_msl_spectral_references.ncl", "note": "The separate 2.5-degree T5-42 smoke input intentionally remains in PyStormTracker/tests/data/ncl/."}
-    },
-    {
-      "id": "pystormtracker-v0.0.2-djf-2p5-parity",
-      "summary": "Git-tracked historical PyStormTracker v0.0.2 IMILAST parity trajectories",
-      "assets": ["pystormtracker-v0.0.2-msl-imilast", "pystormtracker-v0.0.2-vo850-imilast"],
-      "provenance": {"producer": "PyStormTracker v0.0.2", "regeneration": "Historical release behavior; retained for version parity."}
-    },
-    {
-      "id": "pystormtracker-v0.5.0.dev-msl-parity",
-      "summary": "Git-tracked historical PyStormTracker v0.5.0.dev MSL format and TrackJSON parity trajectories",
-      "assets": ["pystormtracker-v0.5.0.dev-msl-imilast", "pystormtracker-v0.5.0.dev-msl-track-format", "pystormtracker-v0.5.0.dev-msl-trackjson"],
-      "provenance": {"producer": "PyStormTracker v0.5.0.dev", "note": "These are PyStormTracker outputs, not independently generated TRACK references."}
-    },
-    {
-      "id": "track-1.5.4-f320-t42-jan-final",
-      "summary": "Git-tracked final positive and negative TRACK 1.5.4 trajectories for the January 2024 F320-to-T42 campaign",
-      "assets": ["track-1.5.4-f320-t42-jan-final-negative", "track-1.5.4-f320-t42-jan-final-positive"],
-      "provenance": {"producer": "TRACK 1.5.4", "source_revision": "6ded301a5f5183d73e5b49c16019024b9a53eff7", "regeneration": "PyStormTracker-Validation campaign configuration and TRACK RSPLICE workflow."}
+      "dataset": "reanalysis-era5-complete",
+      "year": 2024,
+      "month": 12,
+      "variable": "vo",
+      "level": 850,
+      "units": "s**-1",
+      "grid": "F320",
+      "input_format": "grib",
+      "output_format": "netcdf",
+      "request": {
+        "class": "ea",
+        "date": "2024-12-01/to/2024-12-31",
+        "expver": "1",
+        "levtype": "pl",
+        "levelist": "850",
+        "param": "138.128",
+        "stream": "oper",
+        "time": "00/06/12/18",
+        "type": "an",
+        "grid": "F320"
+      }
     }
   ]
 }

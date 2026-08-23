@@ -2,147 +2,165 @@ from __future__ import annotations
 
 import json
 import sys
-import tarfile
-from types import SimpleNamespace
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
 
 import pytest
-
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from fetch_era5 import (  # noqa: E402
+import release_data
+from fetch_era5 import (
+    canonical_f320_filename,
     list_catalog,
     load_catalog,
-    load_catalog_document,
-    resolve_release_entries,
     select_entries,
 )
-import release_data  # noqa: E402
-from release_data import classify, next_tag, plan, stage_manual_assets, write_checksums  # noqa: E402
-
+from release_data import classify, next_tag, plan, write_checksums
 
 CATALOG = Path(__file__).resolve().parents[1] / "data" / "era5_requests.json"
-
-
-def test_catalog_is_valid_json() -> None:
-    catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
-    assert catalog["schema_version"] == 2
-    assert isinstance(catalog["datasets"], list)
+ROOT = CATALOG.parents[1]
 
 
 @pytest.fixture(scope="module")
-def entries() -> list[dict[str, object]]:
+def entries() -> list[dict[str, Any]]:
     return load_catalog(CATALOG)
 
 
-@pytest.fixture(scope="module")
-def catalog_document() -> dict[str, object]:
-    return load_catalog_document(CATALOG)
+def test_catalog_describes_only_physical_era5_entries(
+    entries: list[dict[str, Any]],
+) -> None:
+    document = json.loads(CATALOG.read_text(encoding="utf-8"))
+
+    assert document["schema_version"] == 1
+    assert len(entries) == 34
+    assert all(entry["source"] == "cds" for entry in entries)
+    assert set(document) == {"schema_version", "description", "datasets"}
+    assert all("source_path" not in entry for entry in entries)
 
 
-def test_catalog_has_unique_ids_and_filenames(entries: list[dict[str, object]]) -> None:
-    assert len(entries) == 36
+def test_catalog_has_unique_ids_and_filenames(entries: list[dict[str, Any]]) -> None:
     assert len({entry["id"] for entry in entries}) == len(entries)
     assert len({entry["filename"] for entry in entries}) == len(entries)
+    assert all(Path(entry["filename"]).name == entry["filename"] for entry in entries)
 
 
-def test_git_references_exist_and_have_provenance(catalog_document: dict[str, object]) -> None:
-    root = CATALOG.parents[1]
-    references = catalog_document["git_references"]
-    assert references
-    assert len({reference["id"] for reference in references}) == len(references)
-    for reference in references:
-        assert (root / reference["path"]).is_file()
-        assert reference["provenance"]
-
-
-def test_logical_f320_datasets_are_ordered_monthly_release_assets(
-    catalog_document: dict[str, object],
+def test_f320_entries_are_explicit_monthly_requests(
+    entries: list[dict[str, Any]],
 ) -> None:
-    logical = {entry["id"]: entry for entry in catalog_document["logical_datasets"]}
-    for logical_id, variable in (("era5-msl-2024-f320", "msl"), ("era5-vo850-2024-f320", "vo850")):
-        assets = logical[logical_id]["assets"]
-        assert assets == [f"era5-{variable}-2024-f320-{month:02d}" for month in range(1, 13)]
+    f320 = [entry for entry in entries if entry.get("grid") == "F320"]
+    assert len(f320) == 24
+
+    for product, variable in (("msl", "msl"), ("vo850", "vo")):
+        product_entries = sorted(
+            (entry for entry in f320 if entry["variable"] == variable),
+            key=lambda entry: entry["month"],
+        )
+        assert [entry["month"] for entry in product_entries] == list(range(1, 13))
+        assert [entry["filename"] for entry in product_entries] == [
+            canonical_f320_filename(product, month) for month in range(1, 13)
+        ]
+        assert all(
+            entry["dataset"] == "reanalysis-era5-complete" for entry in product_entries
+        )
+        assert all(entry["request"]["grid"] == "F320" for entry in product_entries)
+        assert all(
+            entry["request"]["time"] == "00/06/12/18" for entry in product_entries
+        )
+
+    vo_entry = next(entry for entry in f320 if entry["variable"] == "vo")
+    assert vo_entry["level"] == 850
+    assert vo_entry["request"]["levelist"] == "850"
+    assert vo_entry["request"]["param"] == "138.128"
 
 
-def test_logical_release_id_resolves_to_its_twelve_assets(catalog_document: dict[str, object]) -> None:
-    resolved = resolve_release_entries(catalog_document, ["era5-msl-2024-f320"])
-    assert [entry["filename"] for entry in resolved] == [
-        f"era5_msl_2024-{month:02d}_f320.nc" for month in range(1, 13)
+def test_important_git_files_and_zarr_stores_exist() -> None:
+    expected_files = [
+        ROOT / "parity/ncl/README.md",
+        ROOT / "parity/ncl/era5_msl_2025-12-01_0000_0.25x0.25.nc",
+        ROOT / "parity/legacy/v0.0.2/era5_msl_2025-2026_djf_2.5x2.5_imilast.txt",
+        ROOT / "parity/legacy/v0.5.0.dev/era5_msl_2025-2026_djf_2.5x2.5.trackjson",
+        ROOT / "parity/track/1.5.4/era5_msl_2024-01_f320-t42_final-positive.txt",
     ]
+    assert all(path.is_file() for path in expected_files)
+    assert not (ROOT / "reference").exists()
+
+    for store in sorted((ROOT / "integration").glob("*.zarr")):
+        assert (store / ".zgroup").is_file()
+        assert (store / ".zmetadata").is_file()
+        assert any(
+            path.is_file()
+            for path in store.rglob("*")
+            if path.name not in {".zgroup", ".zmetadata", ".zattrs"}
+        )
 
 
-def test_list_includes_physical_git_and_logical_entries(catalog_document: dict[str, object]) -> None:
-    lines = list_catalog(catalog_document)
-    assert any(line.startswith("era5-msl-2024-f320-01 [release/manual]") for line in lines)
-    assert any(line.startswith("pystormtracker-v0.5.0.dev-msl-imilast [git]") for line in lines)
-    assert any(line.startswith("era5-msl-2024-f320 [logical]") for line in lines)
-
-
-def test_n320_entries_use_complete_era5_grib_requests(entries: list[dict[str, object]]) -> None:
-    n320_entries = [entry for entry in entries if "-n320-" in entry["id"]]
-    assert {entry["id"] for entry in n320_entries} == {
-        "msl-n320-grib",
-        "vo850-n320-grib",
-    }
-    assert all(entry["source"] == "cds" for entry in n320_entries)
-    assert all(entry["dataset"] == "reanalysis-era5-complete" for entry in n320_entries)
-    assert all(entry["request"]["grid"] == "N320" for entry in n320_entries)
-
-
-def test_manual_zarr_entry_is_archived_from_its_configured_source(
-    entries: list[dict[str, object]], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+def test_catalog_listing_contains_physical_entries_only(
+    entries: list[dict[str, Any]],
 ) -> None:
-    entry = next(entry for entry in entries if entry["id"] == "msl-25-zarr")
-    store = tmp_path / entry["source_path"]
-    store.mkdir()
-    (store / ".zgroup").write_text('{"zarr_format": 2}\n', encoding="utf-8")
-    stage = tmp_path / "stage"
-    stage.mkdir()
-    monkeypatch.setattr(release_data, "ROOT", tmp_path)
-
-    stage_manual_assets(stage, [entry])
-
-    archive = stage / entry["filename"]
-    with tarfile.open(archive, "r:gz") as contents:
-        assert f"{store.name}/.zgroup" in contents.getnames()
+    lines = list_catalog(entries)
+    assert any(line.startswith("msl-f320-2024-01 [cds]") for line in lines)
+    assert not any("[logical]" in line or "[git]" in line for line in lines)
 
 
-def test_manual_f320_asset_is_staged_and_checksums_are_written(
-    entries: list[dict[str, object]], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    entry = next(entry for entry in entries if entry["id"] == "era5-msl-2024-f320-01")
-    source = tmp_path / entry["source_path"]
-    source.parent.mkdir(parents=True)
-    source.write_bytes(b"small NetCDF stand-in")
-    stage = tmp_path / "stage"
-    stage.mkdir()
-    monkeypatch.setattr(release_data, "ROOT", tmp_path)
-
-    stage_manual_assets(stage, [entry])
-    manifest = write_checksums(stage)
-
-    assert (stage / entry["filename"]).read_bytes() == b"small NetCDF stand-in"
-    assert entry["filename"] in manifest.read_text(encoding="utf-8")
-
-
-def test_select_entries_rejects_unknown_id(entries: list[dict[str, object]]) -> None:
+def test_select_entries_rejects_unknown_id(entries: list[dict[str, Any]]) -> None:
     with pytest.raises(SystemExit, match="unknown dataset ID"):
         select_entries(entries, ["not-a-dataset"])
 
 
-def test_new_catalog_entry_is_downloaded_without_update(entries: list[dict[str, object]]) -> None:
-    inherited_ids, new_ids, download_ids = classify(entries, set(), [])
-    assert inherited_ids == []
-    assert new_ids == [entry["id"] for entry in entries]
-    assert download_ids == new_ids
-
-
-def test_explicit_update_regenerates_an_inherited_entry(entries: list[dict[str, object]]) -> None:
+def test_classify_inherits_by_physical_filename(entries: list[dict[str, Any]]) -> None:
     inherited = {entry["filename"] for entry in entries}
-    inherited_ids, new_ids, download_ids = classify(entries, inherited, ["uv850-025-netcdf"])
+    inherited_ids, new_ids, download_ids = classify(
+        entries, inherited, ["msl-f320-2024-01"]
+    )
+
+    assert new_ids == []
+    assert download_ids == ["msl-f320-2024-01"]
+    assert "msl-025-netcdf" in inherited_ids
+
+
+def test_write_checksums_covers_release_assets(tmp_path: Path) -> None:
+    (tmp_path / "a.nc").write_bytes(b"NetCDF")
+    (tmp_path / "b.grib").write_bytes(b"GRIB")
+    (tmp_path / "ignored.txt").write_text("not an asset", encoding="utf-8")
+
+    manifest = write_checksums(tmp_path)
+    lines = manifest.read_text(encoding="utf-8").splitlines()
+
+    assert [line.split(maxsplit=1)[1] for line in lines] == ["a.nc", "b.grib"]
+
+
+def test_initial_release_plan_has_no_fake_base_release(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("release_data.latest_release", lambda repo: None)
+
+    build_plan = plan("owner/repo", CATALOG, [], "v0.2.0-data")
+
+    assert build_plan["base_tag"] is None
+    assert build_plan["next_tag"] == "v0.2.0-data"
+    assert len(build_plan["download_ids"]) == 34
+
+
+def test_initial_release_requires_explicit_tag(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("release_data.latest_release", lambda repo: None)
+
+    with pytest.raises(SystemExit, match="--next-tag"):
+        plan("owner/repo", CATALOG, [])
+
+
+def test_explicit_update_regenerates_an_inherited_entry(
+    entries: list[dict[str, Any]],
+) -> None:
+    inherited = {entry["filename"] for entry in entries}
+    inherited_ids, new_ids, download_ids = classify(
+        entries, inherited, ["uv850-025-netcdf"]
+    )
+
     assert "msl-025-netcdf" in inherited_ids
     assert new_ids == []
     assert download_ids == ["uv850-025-netcdf"]
@@ -154,72 +172,6 @@ def test_patch_tag_increment() -> None:
         next_tag("v0.1-data")
 
 
-def test_explicit_next_tag_overrides_the_patch_default(monkeypatch: pytest.MonkeyPatch) -> None:
-    responses = iter([
-        '[{"tag_name":"v0.1.4-data","draft":false}]',
-        '{"assets":[]}',
-    ])
-    monkeypatch.setattr("release_data.output", lambda *command: next(responses))
-
-    build_plan = plan("owner/repo", CATALOG, [], "v0.2.0-data")
-
-    assert build_plan["next_tag"] == "v0.2.0-data"
-
-
 def test_release_requires_explicit_staging_review_confirmation(tmp_path: Path) -> None:
     with pytest.raises(SystemExit, match="--confirm-reviewed"):
         release_data.release(SimpleNamespace(stage=tmp_path, confirm_reviewed=False))
-
-
-def test_reviewed_minor_release_uses_the_staged_tag(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    stage = tmp_path / "stage"
-    stage.mkdir()
-    (stage / release_data.STATE_NAME).write_text(
-        json.dumps(
-            {
-                "base_tag": "v0.1.4-data",
-                "next_tag": "v0.2.0-data",
-                "note": "Data update: verified F320 assets.",
-            }
-        ),
-        encoding="utf-8",
-    )
-    (stage / "SHA256SUMS").write_text("checksum  asset.nc\n", encoding="utf-8")
-    monkeypatch.setattr(release_data, "latest_release", lambda repo: {"tag_name": "v0.1.4-data"})
-    monkeypatch.setattr(release_data, "write_checksums", lambda stage: stage / "SHA256SUMS")
-    monkeypatch.setattr(release_data.subprocess, "run", lambda *args, **kwargs: SimpleNamespace(returncode=1))
-    commands: list[tuple[str, ...]] = []
-    monkeypatch.setattr(release_data, "run", lambda *command, **kwargs: commands.append(command))
-
-    release_data.release(SimpleNamespace(stage=stage, repo="owner/repo", confirm_reviewed=True))
-
-    assert commands[0] == ("git", "tag", "-a", "v0.2.0-data", "-m", "Data update: verified F320 assets.")
-
-
-def test_dry_run_plan_uses_latest_release_without_downloading(monkeypatch: pytest.MonkeyPatch) -> None:
-    responses = iter([
-        '[{"tag_name":"v0.1.3-data","draft":false}]',
-        '{"assets":[{"name":"era5_msl_2025-2026_djf_0.25x0.25.nc"}]}',
-    ])
-    monkeypatch.setattr("release_data.output", lambda *command: next(responses))
-    build_plan = plan("owner/repo", CATALOG, [])
-    assert build_plan["base_tag"] == "v0.1.3-data"
-    assert build_plan["next_tag"] == "v0.1.4-data"
-    assert "msl-25-netcdf" in build_plan["new_ids"]
-
-
-def test_dry_run_logical_update_expands_without_downloading(monkeypatch: pytest.MonkeyPatch) -> None:
-    inherited_assets = json.dumps(
-        {"assets": [{"name": entry["filename"]} for entry in load_catalog(CATALOG)]}
-    )
-    responses = iter([
-        '[{"tag_name":"v0.1.3-data","draft":false}]',
-        inherited_assets,
-    ])
-    monkeypatch.setattr("release_data.output", lambda *command: next(responses))
-
-    build_plan = plan("owner/repo", CATALOG, ["era5-vo850-2024-f320"])
-
-    assert build_plan["download_ids"][-12:] == [
-        f"era5-vo850-2024-f320-{month:02d}" for month in range(1, 13)
-    ]

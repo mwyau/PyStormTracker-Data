@@ -1,8 +1,9 @@
 *.nc export-ignore linguist-language=NetCDF
 *.grib export-ignore linguist-language=GRIB
 
-# Zarr stores are distributed as Release archives, not source archives.
+# Zarr stores stay in Git for direct raw.githubusercontent.com access; omit them
+# from source archives because the stores are already available from Git.
 *.zarr export-ignore
 
 # Exact TRACK 1.5.4 reference texts retain the producer's trailing spaces.
-parity/track-1.5.4/*.txt -whitespace
+parity/track/1.5.4/*.txt -whitespace
