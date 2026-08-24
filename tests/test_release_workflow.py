@@ -27,7 +27,7 @@ from release_data import (
     write_checksums,
 )
 
-CATALOG = Path(__file__).resolve().parents[1] / "data" / "era5_requests.json"
+CATALOG = Path(__file__).resolve().parents[1] / "manifests" / "era5.json"
 ROOT = CATALOG.parents[1]
 
 
@@ -69,11 +69,12 @@ def test_important_git_files_and_zarr_stores_exist() -> None:
         )
 
 
-def test_catalog_listing_contains_physical_entries_only(
+def test_catalog_listing_contains_active_physical_entries_only(
     entries: list[dict[str, Any]],
 ) -> None:
     lines = list_catalog(entries)
-    assert any(line.startswith("msl-f320-2024-01 [cds]") for line in lines)
+    assert any(line.startswith("msl-025-netcdf [cds]") for line in lines)
+    assert not any("f320" in line.lower() for line in lines)
     assert not any("[logical]" in line or "[git]" in line for line in lines)
 
 
@@ -85,11 +86,11 @@ def test_select_entries_rejects_unknown_id(entries: list[dict[str, Any]]) -> Non
 def test_classify_inherits_by_physical_filename(entries: list[dict[str, Any]]) -> None:
     inherited = {entry["filename"] for entry in entries}
     inherited_ids, new_ids, download_ids = classify(
-        entries, inherited, ["msl-f320-2024-01"]
+        entries, inherited, ["msl-25-netcdf"]
     )
 
     assert new_ids == []
-    assert download_ids == ["msl-f320-2024-01"]
+    assert download_ids == ["msl-25-netcdf"]
     assert "msl-025-netcdf" in inherited_ids
 
 
@@ -113,7 +114,7 @@ def test_initial_release_plan_has_no_fake_base_release(
 
     assert build_plan["base_tag"] is None
     assert build_plan["next_tag"] == "v0.2.0-data"
-    assert len(build_plan["download_ids"]) == 34
+    assert len(build_plan["download_ids"]) == 10
 
 
 def test_initial_release_requires_explicit_tag(
@@ -178,7 +179,7 @@ def _minimal_config(tmp_path: Path, entry_ids: list[str]) -> Path:
     document["datasets"] = [
         entry for entry in document["datasets"] if entry["id"] in entry_ids
     ]
-    path = tmp_path / "era5_requests.json"
+    path = tmp_path / "era5.json"
     path.write_text(json.dumps(document), encoding="utf-8")
     return path
 
