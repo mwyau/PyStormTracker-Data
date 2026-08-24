@@ -1,76 +1,100 @@
 # PyStormTracker-Data
 
-This repository holds the external scientific data used by
-[PyStormTracker](https://github.com/mwyau/PyStormTracker). The data contract is
-intentionally based on ordinary paths and filenames.
+This repository owns the external scientific data used by
+[PyStormTracker](https://github.com/mwyau/PyStormTracker).
 
 ## Storage model
 
-- Small parity/reference files are Git-tracked and served from their exact path
-  through `raw.githubusercontent.com`.
-- The two Git-tracked Zarr stores under `integration/` are also served object by
-  object through the raw Git URL. They are not duplicated as release archives.
-- Large monolithic NetCDF and GRIB files are GitHub Release assets. The 2024
-  F320 collection consists of twelve monthly NetCDF files for MSL and twelve
-  for 850 hPa vorticity.
+- Small parity/reference files are Git-tracked at stable paths.
+- The Zarr stores under `integration/` are Git-tracked for direct HTTP access.
+- Large NetCDF and GRIB files are complete GitHub Release assets, accompanied
+  by `SHA256SUMS`.
 
-A PyStormTracker consumer pins one immutable Data tag and uses that same tag in
-both URL bases:
+Consumers pin one immutable Data tag in both URL bases:
 
 ```text
 RAW_BASE=https://raw.githubusercontent.com/mwyau/PyStormTracker-Data/<tag>/
 RELEASE_BASE=https://github.com/mwyau/PyStormTracker-Data/releases/download/<tag>/
 ```
 
-Small files are fetched with paths such as
-`parity/ncl/<file>`, `parity/legacy/v0.0.2/<file>`, and
-`parity/track/1.5.4/<file>`. Large files are fetched with their release
-filename, for example `era5_msl_2024-01_f320.nc`. A full-year F320 workflow
-constructs the twelve monthly filenames directly and opens them lazily.
+The compact reference paths are:
 
-The `parity/legacy/` files are historical PyStormTracker outputs. They are not
-TRACK output even when one file uses a TRACK-compatible text format. Only files
-under `parity/track/1.5.4/` are genuine TRACK 1.5.4 output. NCL/Spherepack
-reference files live under `parity/ncl/`; generation scripts and experiment-
-specific staging belong to the sibling `PyStormTracker-Validation`
-repository.
-
-The ordinary offline integration input
-`PyStormTracker/tests/data/era5/era5_msl_2025-12_2.5x2.5.nc` remains in the
-software repository and does not depend on this repository or the network.
-
-## Acquiring ERA5 F320 data
-
-Install the tools with `uv` and configure the CDS API credentials outside
-Git:
-
-```bash
-uv pip install -r requirements.txt
-uv run --with-requirements requirements.txt python scripts/fetch_era5.py --list
+```text
+parity/legacy/v0.0.2/
+parity/legacy/v0.5.0/
+parity/ncl/
+parity/track/1.5.4/
 ```
 
-F320 acquisition is month by month. For each selected entry,
-`fetch_era5.py` retrieves the exact CDS ERA5 Complete MARS request, checks the
-returned GRIB's variable, level, F320 geometry, and frame count, converts it to
-canonical float32 NetCDF, and checks the monthly time coverage, units, geometry,
-and readability before promoting the output.
+`parity/legacy/` contains historical PyStormTracker outputs; only
+`parity/track/1.5.4/` contains TRACK 1.5.4 output.
 
-The release workflow stages the physical files and writes `SHA256SUMS`:
+## ERA5 acquisition
+
+The catalog in `data/era5_requests.json` contains the physical acquisition
+definitions. F320 MSL and 850 hPa vorticity are defined as twelve monthly 2024
+requests each. The acquisition script validates the request identity, F320
+Gaussian geometry, units, and monthly six-hourly time coverage before promoting
+each NetCDF file.
+
+Use Python 3.14 or newer with the locked uv project:
 
 ```bash
-uv run --with-requirements requirements.txt python scripts/release_data.py dry-run --next-tag <new-data-tag>
-uv run --with-requirements requirements.txt python scripts/release_data.py download --next-tag <new-data-tag>
-# review release-data/ and SHA256SUMS
-uv run --with-requirements requirements.txt python scripts/release_data.py release --confirm-reviewed
+uv sync --locked
+uv run python scripts/fetch_era5.py --list
 ```
 
-The release workflow does not inspect or register parity paths. Small Git files
-already have stable identity from the pinned Git tag.
+F320 acquisition also requires the ecCodes command-line tools `grib_get`,
+`grib_count`, and `grib_to_netcdf`. On Ubuntu:
+
+```bash
+sudo apt install libeccodes-tools
+```
+
+Configure CDS credentials outside Git. Fetched files are normally staged in
+`release-data/`, which is a resumable, checksum-aware cache. Matching inherited
+assets and trustworthy prior staged assets are reused; corrupt or missing files
+are replaced, and `--update ID` forces that catalog entry to be acquired again.
+
+## Release preparation
+
+The release workflow keeps the complete large asset set in GitHub Releases and
+keeps compact files and Zarr stores in Git. It uses `gh` for release discovery
+and asset transfer:
+
+```bash
+uv run python scripts/release_data.py dry-run --next-tag v0.2.0-data
+uv run python scripts/release_data.py download --next-tag v0.2.0-data
+uv run python scripts/release_data.py release
+```
+
+The final command verifies the unchanged prepared stage, then creates the tag
+and GitHub Release. If an attempted release must be discarded before retrying,
+run `gh release delete <tag> --cleanup-tag --yes --repo mwyau/PyStormTracker-Data`.
+Then rerun `uv run python scripts/release_data.py release` while the staged
+state remains valid.
+Inherited Release assets are verified against SHA-256 digests returned by the
+GitHub Releases API. Each prepared release also publishes SHA256SUMS.
+For corrections after publication, prepare a new patch Data release, such as
+`v0.2.1-data`. Use `--update ID` with `dry-run` and `download` when a physical
+dataset must be refreshed.
+
+## NCL/Spherepack references
+
+The static files under `parity/ncl/` are generated from the full DJF MSL
+Release assets staged in `release-data/`:
+
+```bash
+ncl scripts/ncl/generate_msl_spectral_references.ncl
+```
+
+The generator checks that the first source frame is `2025-12-01 00:00` and
+accepts explicit `src25`, `src025`, `release_dir`, and `outdir` overrides.
 
 ## Tests
 
 ```bash
-uv run --with-requirements requirements.txt pytest
+uv run pytest
 ```
 
 ## License

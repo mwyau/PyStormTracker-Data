@@ -21,6 +21,7 @@ CDS_SOURCE = "cds"
 F320_LATITUDES = 640
 F320_LONGITUDES = 1280
 FRAMES_PER_DAY = 4
+F320_ECCODES_COMMANDS = ("grib_get", "grib_count", "grib_to_netcdf")
 
 
 class CDSClient(Protocol):
@@ -329,24 +330,32 @@ def fetch_f320_month(
     output_dir.mkdir(parents=True, exist_ok=True)
     target = output_dir / entry["filename"]
     if target.exists() and not overwrite:
-        validate_f320_file(target, entry)
-        return target
+        try:
+            validate_f320_file(target, entry)
+        except Exception:
+            # A failed validation must not make a bad canonical file look
+            # usable on the next run.
+            target.unlink(missing_ok=True)
+        else:
+            return target
 
     source = output_dir / f"{entry['filename']}.grib.partial"
     converted = output_dir / f"{entry['filename']}.partial"
-    if source.exists() or converted.exists():
-        raise RuntimeError(
-            f"remove incomplete F320 output before continuing: {source} or {converted}"
-        )
-
-    client.retrieve(entry["dataset"], entry["request"], str(source))
-    _require_nonempty_file(source, "CDS retrieval")
-    validate_f320_grib(source, entry)
-    convert_grib_to_netcdf(source, converted)
-    _require_nonempty_file(converted, "NetCDF conversion")
-    validate_f320_file(converted, entry)
-    converted.replace(target)
-    source.unlink()
+    # Partial files are disposable workflow state.  Remove leftovers from a
+    # failed prior attempt so retrying does not require manual cleanup.
+    source.unlink(missing_ok=True)
+    converted.unlink(missing_ok=True)
+    try:
+        client.retrieve(entry["dataset"], entry["request"], str(source))
+        _require_nonempty_file(source, "CDS retrieval")
+        validate_f320_grib(source, entry)
+        convert_grib_to_netcdf(source, converted)
+        _require_nonempty_file(converted, "NetCDF conversion")
+        validate_f320_file(converted, entry)
+        converted.replace(target)
+    finally:
+        source.unlink(missing_ok=True)
+        converted.unlink(missing_ok=True)
     return target
 
 
@@ -364,15 +373,21 @@ def fetch_entry(
     output_dir.mkdir(parents=True, exist_ok=True)
     target = output_dir / entry["filename"]
     if target.exists() and not overwrite:
-        _require_nonempty_file(target, "existing CDS asset")
-        return target
+        try:
+            _require_nonempty_file(target, "existing CDS asset")
+        except RuntimeError:
+            target.unlink(missing_ok=True)
+        else:
+            return target
 
     temporary = output_dir / f"{entry['filename']}.partial"
-    if temporary.exists():
-        raise RuntimeError(f"remove incomplete output before continuing: {temporary}")
-    client.retrieve(entry["dataset"], entry["request"], str(temporary))
-    _require_nonempty_file(temporary, "CDS retrieval")
-    temporary.replace(target)
+    temporary.unlink(missing_ok=True)
+    try:
+        client.retrieve(entry["dataset"], entry["request"], str(temporary))
+        _require_nonempty_file(temporary, "CDS retrieval")
+        temporary.replace(target)
+    finally:
+        temporary.unlink(missing_ok=True)
     return target
 
 
@@ -380,10 +395,20 @@ def _create_cds_client() -> CDSClient:
     try:
         import cdsapi
     except ImportError as error:
-        raise SystemExit(
-            'cdsapi is required; run: uv pip install "cdsapi>=0.7.7"'
-        ) from error
+        raise SystemExit("cdsapi is required; run: uv sync --locked") from error
     return cdsapi.Client()
+
+
+def require_f320_eccodes_tools() -> None:
+    """Fail before acquisition when required ecCodes executables are unavailable."""
+    missing = [
+        command for command in F320_ECCODES_COMMANDS if shutil.which(command) is None
+    ]
+    if missing:
+        raise RuntimeError(
+            "F320 acquisition requires ecCodes command-line tools; missing: "
+            + ", ".join(missing)
+        )
 
 
 def fetch_entries(
@@ -393,6 +418,8 @@ def fetch_entries(
     overwrite: bool = False,
 ) -> list[Path]:
     """Retrieve a selected list of physical entries with one CDS client."""
+    if any(_is_f320(entry) for entry in entries):
+        require_f320_eccodes_tools()
     client = _create_cds_client()
     return [
         fetch_entry(entry, output_dir, client, overwrite=overwrite) for entry in entries
