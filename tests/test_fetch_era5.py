@@ -18,7 +18,6 @@ from fetch_era5 import (
     canonical_f320_filename,
     expected_month_times,
     load_catalog,
-    load_catalog_document,
     validate_f320_dataset,
     validate_f320_geometry,
 )
@@ -26,14 +25,10 @@ from fetch_era5 import (
 CATALOG = Path(__file__).resolve().parents[1] / "manifests" / "era5.json"
 
 
-def _all_entries() -> list[dict[str, Any]]:
-    return load_catalog_document(CATALOG, include_disabled=True)["datasets"]
-
-
 def _entry(product: str = "msl", month: int = 1) -> dict[str, Any]:
     return next(
         entry
-        for entry in _all_entries()
+        for entry in load_catalog(CATALOG)
         if entry.get("grid") == "F320"
         and entry["filename"] == canonical_f320_filename(product, month)
     )
@@ -61,8 +56,9 @@ def _valid_dataset(entry: dict[str, Any]) -> xr.Dataset:
 
 
 def test_catalog_integrity_and_f320_request_identity() -> None:
-    entries = _all_entries()
+    entries = load_catalog(CATALOG)
 
+    assert len(entries) == 34
     assert len({entry["id"] for entry in entries}) == len(entries)
     assert len({entry["filename"] for entry in entries}) == len(entries)
 
@@ -88,16 +84,6 @@ def test_catalog_integrity_and_f320_request_identity() -> None:
             assert all("levelist" not in entry["request"] for entry in selected)
         else:
             assert all(entry["request"]["levelist"] == level for entry in selected)
-
-
-def test_active_catalog_defers_f320() -> None:
-    active = load_catalog(CATALOG)
-    all_entries = _all_entries()
-
-    assert len(active) == 10
-    assert len(all_entries) == 34
-    assert not any(entry.get("grid") == "F320" for entry in active)
-    assert sum(entry.get("grid") == "F320" for entry in all_entries) == 24
 
 
 def test_expected_month_times_cover_leap_year() -> None:

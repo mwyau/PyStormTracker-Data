@@ -22,7 +22,6 @@ F320_LATITUDES = 640
 F320_LONGITUDES = 1280
 FRAMES_PER_DAY = 4
 F320_ECCODES_COMMANDS = ("grib_get", "grib_count", "grib_to_netcdf")
-F320_ENABLED = False
 
 
 class CDSClient(Protocol):
@@ -61,9 +60,7 @@ def _f320_product(entry: CatalogEntry) -> str:
     return "vo850" if entry.get("variable") == "vo" else "msl"
 
 
-def load_catalog_document(
-    path: Path, *, include_disabled: bool = False
-) -> dict[str, Any]:
+def load_catalog_document(path: Path) -> dict[str, Any]:
     """Read and validate the physical ERA5 acquisition definitions."""
     try:
         catalog = json.loads(path.read_text(encoding="utf-8"))
@@ -136,19 +133,12 @@ def load_catalog_document(
             if entry["variable"] == "vo" and entry.get("level") != 850:
                 raise SystemExit(f"VO850 F320 entry must specify level 850: {entry!r}")
 
-    if include_disabled or F320_ENABLED:
-        return catalog
-    return {
-        **catalog,
-        "datasets": [entry for entry in entries if not _is_f320(entry)],
-    }
+    return catalog
 
 
-def load_catalog(
-    path: Path, *, include_disabled: bool = False
-) -> list[CatalogEntry]:
-    """Return active physical acquisition entries."""
-    return load_catalog_document(path, include_disabled=include_disabled)["datasets"]
+def load_catalog(path: Path) -> list[CatalogEntry]:
+    """Return physical acquisition entries."""
+    return load_catalog_document(path)["datasets"]
 
 
 def parse_ids(values: list[str]) -> list[str]:

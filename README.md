@@ -32,10 +32,13 @@ parity/track/1.5.4/
 ## ERA5 acquisition
 
 The manifest in `manifests/era5.json` contains the physical acquisition
-definitions. The 2024 F320 MSL and 850 hPa vorticity definitions are retained
-but currently disabled, so they are not part of `v0.2.0-data`. The acquisition
-code still validates the request identity, F320 Gaussian geometry, units, and
-monthly six-hourly time coverage when F320 is enabled.
+definitions. The 2024 F320 MSL and 850 hPa vorticity definitions are active
+acquisition entries. The published `v0.2.0-data` Release includes all 24
+canonical monthly 2024 F320 NetCDF assets, materialized from existing annual
+F320 GRIB sources. Future Data releases inherit those physical assets from the
+previous Release unless they are explicitly replaced. The acquisition code
+validates the request identity, F320 Gaussian geometry, units, and monthly
+six-hourly time coverage.
 
 Use Python 3.14 or newer with the locked uv project:
 

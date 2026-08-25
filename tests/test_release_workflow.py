@@ -74,7 +74,7 @@ def test_catalog_listing_contains_active_physical_entries_only(
 ) -> None:
     lines = list_catalog(entries)
     assert any(line.startswith("msl-025-netcdf [cds]") for line in lines)
-    assert not any("f320" in line.lower() for line in lines)
+    assert any(line.startswith("msl-f320-2024-01 [cds]") for line in lines)
     assert not any("[logical]" in line or "[git]" in line for line in lines)
 
 
@@ -114,7 +114,7 @@ def test_initial_release_plan_has_no_fake_base_release(
 
     assert build_plan["base_tag"] is None
     assert build_plan["next_tag"] == "v0.2.0-data"
-    assert len(build_plan["download_ids"]) == 10
+    assert len(build_plan["download_ids"]) == 34
 
 
 def test_initial_release_requires_explicit_tag(
