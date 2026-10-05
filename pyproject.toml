@@ -6,7 +6,7 @@ dependencies = [
     "cdsapi>=0.7.7",
     "netCDF4>=1.7",
     "numpy>=2.0",
-    "xarray>=2025.1",
+    "xarray>=2026.9.0",
 ]
 
 [dependency-groups]
